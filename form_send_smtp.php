@@ -56,6 +56,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        // 문자 보내기
+        // 문자서비스: 제이문자 https://jmunja.com 회원가입 시 API 사용 체크
+        $sms_subject = "문의사항 도착"; // 제목
+        $sms_content = ""; // 내용
+        $sms_content .= "이름: $name\n";
+        $sms_content .= "휴대폰번호: $phone\n";
+        $sms_content .= "이메일: $email\n";
+        $sms_content .= "문의내용: $message\n";
+        $sms_admin_hp = "01012345678"; // 수신번호
+        $sms_id = ""; // 제이문자 아이디
+        $sms_key = ""; // 제이문자 API KEY
+    
+        try {
+            $cmd = "curl --request POST 'https://jmunja.com/sms/app/api_v2.php' --form 'id={$sms_id}' --form 'pw={$sms_key}' --form 'mode=send' --form 'title={$sms_subject}' --form 'message={$sms_content}' --form 'reqlist={$sms_admin_hp}'";
+            exec($cmd, $output, $return_var);
+        } catch (Exception $e) {
+            echo "<meta charset=\"UTF-8\">";
+            echo "문자 발송 중 예외가 발생했습니다: " . $e->getMessage() . "\n";
+        }
+
         // 이메일 전송
         $mail->send();
         echo "<meta charset=\"UTF-8\">";
